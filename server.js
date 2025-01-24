@@ -1,3 +1,5 @@
+
+require('dotenv').config(); // Memuat variabel environment dari .env
 const express = require('express');
 const OpenAI = require('openai');
 const cors = require('cors');
