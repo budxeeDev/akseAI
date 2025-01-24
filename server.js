@@ -11,7 +11,7 @@ app.use(express.json()); // Untuk mem-parsing body JSON dari permintaan klien
 
 // Inisialisasi OpenAI dengan API key
 const openai = new OpenAI({
-  apiKey: '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', // Ganti dengan API key kamu
+  apiKey: '', // Ganti dengan API key kamu
 });
 
 // Endpoint untuk menangani permintaan chat
