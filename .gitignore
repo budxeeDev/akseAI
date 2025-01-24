@@ -15,7 +15,7 @@ node_modules/
 #Extension App-file
 *.app
 #environment variable 
-.env
+*.env
 #Rapid Application Development File
 rad.json
 #Translation Base-file
