@@ -6,6 +6,8 @@
 .alcache/
 #Symbols folder
 .alpackages/
+#dependensi node.js
+node_module/
 #Snapshots folder
 .snapshots/
 #Testing Output folder
