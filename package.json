@@ -1,12 +1,21 @@
 {
-  "name": "Akse-AI",
+  "name": "Akse AI",
   "version": "1.0",
-  "description": "Aplikasi Node.jj Akse AI",
+  "description": "Chatbot berbasis OpenAI",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js", // Script start untuk menjalankan server
+    "dev": "nodemon server.js" // (Opsional) Script untuk mode pengembangan
   },
   "dependencies": {
-    "express": "^4.18.2"
-  }
+    "express": "^4.18.2",
+    "openai": "^4.1.0",
+    "cors": "^2.8.5",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1" // (Opsional) Untuk pengembangan otomatis reload
+  },
+  "author": "Budxeedev",
+  "license": "MIT"
 }
