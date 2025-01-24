@@ -12,7 +12,7 @@ app.use(express.json());
 
 // Inisialisasi OpenAI dengan API key dari environment variable
 const openai = new OpenAI({
-  apiKey: proccess.env.OPENAI_API_KEY, // Pastikan API key diatur di environment
+  apiKey: process.env.OPENAI_API_KEY, // Pastikan API key diatur di environment
 });
 
 // Endpoint untuk menangani permintaan chat
