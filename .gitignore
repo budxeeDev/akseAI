@@ -14,6 +14,8 @@ node_modules/
 .output/
 #Extension App-file
 *.app
+#environment variable 
+.env
 #Rapid Application Development File
 rad.json
 #Translation Base-file
