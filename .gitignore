@@ -7,7 +7,7 @@
 #Symbols folder
 .alpackages/
 #dependensi node.js
-node_module/
+node_modules/
 #Snapshots folder
 .snapshots/
 #Testing Output folder
