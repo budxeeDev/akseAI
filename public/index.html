@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat dengan Akse AI</title>
+  <style>
+    /* Styling untuk body dan elemen lainnya tetap seperti sebelumnya */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #333;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    strong {
+      font-weight: bold;
+    }
+
+    .response pre {
+      background-color: rgba(0, 0, 0, 0.65);
+      color: red;
+    }
+
+    .chat-container {
+      scroll-snap-type: mandatory;
+      scroll-snap-points-y: repeat(100%);
+      font-weight: 600;
+      position: relative;
+      top: 0;
+      background-color: white;
+      justify-content: center;
+      width: 100%;
+      max-width: 100%;
+      padding: 20px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-sizing: border-box;
+    }
+
+    .message-box {
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      padding: 10px;
+      max-height: calc(80vh - 150px);
+      /* Sesuaikan ruang untuk input */
+      border-radius: 8px;
+    }
+
+    .message {
+      background-color: #f1f1f1;
+      color: #333;
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 70%;
+      align-self: flex-end;
+      word-wrap: break-word;
+    }
+
+    #clearChat {
+      display: none;
+      left: 0;
+      width: 10%;
+      background-color: #f1f1f1;
+      color: #333;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #clearChat:hover {
+      background-color: #f1f1f1;
+    }
+
+
+    .response {
+      background-color: transparent;
+      color: #333;
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 100%;
+      align-self: flex-start;
+      word-wrap: break-word;
+    }
+
+    .input-container {
+      display: flex;
+      gap: 5px;
+      width: 90%;
+      padding: 10px;
+      justify-content: center;
+      align-items: center;
+      background-color: white;
+      box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgb(156, 156, 156);
+      border-radius: 10px;
+      box-sizing: border-box;
+    }
+
+    .input-container input {
+      padding: 10px;
+      font-size: 1rem;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .input-container input:focus {
+      outline: none;
+    }
+
+    button {
+      padding: 10px;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .typing-indicator {
+      font-size: 1.2rem;
+      color: #888;
+      margin-top: 10px;
+      display: flex;
+      gap: 5px;
+    }
+
+    .typing-indicator span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #007bff;
+      animation: typing-indicator 1.5s infinite;
+    }
+
+    .typing-indicator span:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+
+    @keyframes typing-indicator {
+      0% {
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .wrapper-input {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      background-color: #ffffff;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+    }
+
+    .titleAi {
+      text-align: center;
+    }
+
+    .subtitle-ai {
+      font-size: small;
+      font-weight: 500;
+      color: #333;
+      text-align: center;
+    }
+
+    .greating {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 50px;
+    }
+
+    .typing {
+      animation: typing 2s steps(40, end);
+      /* Adjust steps for speed */
+      white-space: nowrap;
+      /* Prevent wrapping */
+      overflow: hidden;
+    }
+
+    @keyframes typing {
+      from {
+        width: 0;
+      }
+
+      to {
+        width: 100%;
+      }
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: transparent;
+      color: white;
+    }
+
+    .login-register {
+      display: flex;
+      gap: 10px;
+      background-color: transparent;
+    }
+
+    .log {
+      padding: 5px 10px;
+      border-radius: 5px;
+      background-color: #000000;
+    }
+
+    .reg {
+      padding: 5px 10px;
+      border-radius: 5px;
+      background-color: #ffffff;
+      border: 1px solid #333;
+    }
+
+    .log a {
+      color: rgb(255, 255, 255);
+      text-decoration: none;
+    }
+
+    .reg a {
+      color: rgb(0, 0, 0);
+      text-decoration: none;
+    }
+
+    .brand {
+      padding: 5px 10px;
+    }
+
+    .brand a {
+      font-weight: bold;
+      color: rgb(31, 31, 31);
+      text-decoration: none;
+    }
+
+    .nav-brand {
+      display: flex;
+      gap: 10px;
+    }
+
+    .toggle {
+      font-size: 24px;
+      position: relative;
+      z-index: 1;
+      cursor: pointer;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: none;
+      /* Sembunyikan menu pada awalnya */
+      position: absolute;
+      left: 0;
+      top: 60px;
+      /* Menempatkan di bawah navbar */
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+      width: 20%;
+      animation: slideIn 0.3s forwards;
+    }
+
+    .nav-links.active {
+      display: block;
+    }
+
+    .nav-links li {
+      margin: 10px 0;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: black;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(-100%);
+      }
+
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    .font-montserrat {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .font-poppins {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .font-roboto {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyDXILoZPfY1Vl0ItWJ6eXqHyy9UCPN4Hcg",
+      authDomain: "akse-ai.firebaseapp.com",
+      projectId: "akse-ai",
+      storageBucket: "akse-ai.firebasestorage.app",
+      messagingSenderId: "451911186785",
+      appId: "1:451911186785:web:372c06a9302d25d1d56d20",
+      measurementId: "G-WVNGW58DCQ"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
+  <script>
+    const API_URL = 'http://localhost:4000/api/chat';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const chatContainer = document.getElementById('chatContainer');
+      const messageInput = document.getElementById('messageInput');
+
+      if (!chatContainer || !messageInput) {
+        console.error("Elemen DOM yang diperlukan tidak ditemukan.");
+        return;
+      }
+
+      function escapeHTML(str) {
+        return str.replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function saveConversation() {
+        const messages = [];
+        chatContainer.querySelectorAll('.message, .response').forEach((msg) => {
+          if (msg.className && msg.innerHTML) {
+            messages.push({
+              type: msg.className,
+              content: msg.innerHTML,
+            });
+          }
+        });
+
+        try {
+          localStorage.setItem('chatMessages', JSON.stringify(messages));
+        } catch (error) {
+          console.error("Gagal menyimpan percakapan:", error);
+        }
+      }
+
+      function loadConversation() {
+        const savedMessages = JSON.parse(localStorage.getItem('chatMessages') || '[]');
+        if (!Array.isArray(savedMessages)) {
+          console.error("Data chat di localStorage tidak valid. Mengatur ulang...");
+          localStorage.removeItem('chatMessages');
+          return;
+        }
+
+        savedMessages.forEach((msg) => {
+          const messageElement = document.createElement('div');
+          messageElement.className = msg.type || 'response';
+          messageElement.innerHTML = msg.content || '';
+          chatContainer.appendChild(messageElement);
+        });
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+
+      function showTypingIndicator() {
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+        typingIndicator.textContent = 'Akse sedang mengetik...';
+        chatContainer.appendChild(typingIndicator);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        return typingIndicator;
+      }
+
+      function hideTypingIndicator(typingIndicator) {
+        if (typingIndicator) typingIndicator.remove();
+      }
+
+      window.sendMessage = async function () {
+        const message = escapeHTML(messageInput.value.trim());
+        if (!message) {
+          alert("Pesan tidak boleh kosong!");
+          return;
+        }
+
+        const userMessage = document.createElement('div');
+        userMessage.className = 'message';
+        userMessage.textContent = message;
+        chatContainer.appendChild(userMessage);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        messageInput.value = '';
+
+        const typingIndicator = showTypingIndicator();
+        const tittleAi = document.getElementById('titleAi');
+        tittleAi.style.display = 'none';
+
+
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message }),
+          });
+
+          if (!response.ok) throw new Error("Gagal mendapatkan respons dari server.");
+
+          const data = await response.json();
+          const botResponse = document.createElement('div');
+          botResponse.className = 'response';
+          botResponse.innerHTML = marked.parse(data.content || "Maaf, saya tidak dapat memproses permintaan Anda saat ini.");
+          chatContainer.appendChild(botResponse);
+
+          // Highlight.js untuk syntax highlighting
+          const codeBlocks = botResponse.querySelectorAll('pre code');
+          codeBlocks.forEach((block) => {
+            hljs.highlightBlock(block);
+          });
+        } catch (error) {
+          console.error('Error saat mengirim pesan:', error);
+          const errorResponse = document.createElement('div');
+          errorResponse.className = 'response';
+          errorResponse.textContent = "Terjadi kesalahan, silakan coba lagi.";
+          chatContainer.appendChild(errorResponse);
+        } finally {
+          hideTypingIndicator(typingIndicator);
+          saveConversation();
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+      };
+
+      loadConversation();
+
+      messageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendMessage();
+      });
+
+      const toggleBtn = document.getElementById('navbarOpen');
+      const navLinks = document.getElementById('navLinks');
+
+      toggleBtn.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+      });
+
+    });
+  </script>
+
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <div class="toggle">
+          <div id="navbarOpen">
+            <svg height="20px" width="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 304.588 304.588" xml:space="preserve">
+              <g>
+                <g>
+                  <g>
+                    <path style="fill:#010002;" d="M0,126.687h118.996V7.68H0V126.687z" />
+                  </g>
+                  <g>
+                    <path style="fill:#010002;" d="M185.581,7.68v287.139h119.007V7.68H185.581z" />
+                  </g>
+                  <g>
+                    <path style="fill:#010002;" d="M118.996,296.908V177.901H0v119.007" />
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </div>
+          <ul class="nav-links" id="navLinks">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="brand">
+          <a href="#">Akse AI</a>
+        </div>
+      </div>
+      <div class="login-register">
+        <div class="log font-poppins">
+          <a href="#">Login</a>
+        </div>
+        <div class="reg font-poppins">
+          <a href="#">Register</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="greating">
+    <h1 class="typing titleAi" id="titleAi">Apakah Ada Yang Bisa Saya Bantu?</h1>
+    <h6 class="subtitle-ai" id="subtitleAi">Akse AI-1.0</h6>
+  </div>
+  <div class="chat-container font-montserrat">
+    <div class="message-box" id="chatContainer">
+    </div>
+
+    </code></pre>
+
+  </div>
+  <div class="wrapper-input">
+    <div class="input-container">
+      <input type="text" id="messageInput" placeholder="Tanya Akse AI" />
+      <button type="submit" onclick="sendMessage()">Kirim</button>
+    </div>
+  </div>
+</body>
+
+</html>
