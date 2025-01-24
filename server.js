@@ -4,14 +4,15 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;
 
-app.use(cors()); // Izinkan permintaan lintas asal (CORS)
-app.use(express.json()); // Untuk mem-parsing body JSON dari permintaan klien
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-// Inisialisasi OpenAI dengan API key
+// Inisialisasi OpenAI dengan API key dari environment variable
 const openai = new OpenAI({
-  apiKey: '', // Ganti dengan API key kamu
+  apiKey: process.env.OPENAI_API_KEY, // Pastikan API key diatur di environment
 });
 
 // Endpoint untuk menangani permintaan chat
@@ -19,35 +20,40 @@ app.post('/api/chat', async (req, res) => {
   try {
     const { message } = req.body;
 
-    // Validasi apakah pesan kosong
-    if (!message || message.trim() === '') {
+    // Validasi pesan
+    if (!message?.trim()) {
       return res.status(400).json({ error: 'Pesan tidak boleh kosong!' });
     }
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', // Atau 'gpt-4-mini' jika tersedia
+      model: 'gpt-3.5-turbo', // Ganti model jika diperlukan
       messages: [
         { role: 'user', content: message },
       ],
     });
 
-    res.json(completion.choices[0].message); // Kirim respon kembali ke klien
+    res.json(completion.choices[0].message); // Kirim respon ke klien
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Terjadi kesalahan pada server');
+    console.error('Error pada OpenAI API:', error);
+    res.status(500).json({ error: error.message || 'Terjadi kesalahan pada server' });
   }
 });
 
+// Endpoint untuk menyajikan file index.html
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'
-    
-  ));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Menyajikan file statis (misalnya index.html) dari folder 'public'
+// Middleware untuk menyajikan file statis
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Menjalankan server di port 4000
+// Log setiap request masuk (opsional, untuk debugging)
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// Menjalankan server
 app.listen(port, () => {
   console.log(`Server berjalan di http://localhost:${port}`);
 });
